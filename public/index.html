@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>5-2 스티커가게</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #fff7ed, #fdf2f8, #eef2ff);
+      color: #111827;
+    }
+
+    header {
+      background: white;
+      padding: 20px 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    button, a {
+      border: none;
+      border-radius: 999px;
+      padding: 13px 20px;
+      background: #6366f1;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      margin-left: 8px;
+    }
+
+    .admin-btn {
+      background: #111827;
+    }
+
+    .main {
+      max-width: 1150px;
+      margin: auto;
+      padding: 35px 20px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ec4899, #6366f1);
+      color: white;
+      border-radius: 35px;
+      padding: 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin: 0;
+    }
+
+    .hero p {
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .emoji {
+      font-size: 120px;
+    }
+
+    .promo {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .sticker {
+      display: inline-block;
+      font-size: 38px;
+      background: #fef3c7;
+      padding: 12px;
+      border-radius: 18px;
+      margin: 5px;
+    }
+
+    .big-promo {
+      margin-top: 30px;
+      background: white;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.1);
+    }
+
+    .promo-line {
+      background: #f3f4f6;
+      padding: 14px;
+      border-radius: 15px;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      place-items: center;
+      z-index: 99;
+    }
+
+    .modal {
+      background: white;
+      color: #111827;
+      width: 400px;
+      max-width: 90%;
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .show {
+      display: grid;
+    }
+
+    @media (max-width: 850px) {
+      .hero { flex-direction: column; text-align: center; }
+      .promo { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🏪 5-2 스티커가게</div>
+  <div>
+    <a href="/order">주문하기</a>
+    <button class="admin-btn" onclick="openAdminModal()">관리자 모드</button>
+  </div>
+</header>
+
+<div class="main">
+  <section class="hero">
+    <div>
+      <h1>세상에 하나뿐인 스티커를 만들어보세요!</h1>
+      <p>
+        귀여움 폭발, 개성 폭발, 5-2 공식 스티커가게입니다.<br>
+        기본 스티커부터 직접 꾸미는 커스텀 주문까지 가능합니다.
+      </p>
+      <a href="/order">지금 주문하러 가기</a>
+    </div>
+    <div class="emoji">🎀</div>
+  </section>
+
+  <section class="promo">
+    <div class="card">
+      <h2>✨ 직접 커스터마이징</h2>
+      <p>문구, 색상, 크기, 수량을 직접 정해서 주문할 수 있습니다.</p>
+      <span class="sticker">✏️</span>
+      <span class="sticker">🎨</span>
+    </div>
+
+    <div class="card">
+      <h2>🐱 인기 스티커</h2>
+      <p>고양이, 왕관, 민상코드, 콩떡게임즈 디자인 준비 완료!</p>
+      <span class="sticker">🐱</span>
+      <span class="sticker">👑</span>
+    </div>
+
+    <div class="card">
+      <h2>✅ 관리자 승인제</h2>
+      <p>주문하면 바로 등록되지 않고 관리자 승인 후 주문내역에 올라갑니다.</p>
+      <span class="sticker">📦</span>
+      <span class="sticker">✅</span>
+    </div>
+  </section>
+
+  <section class="big-promo">
+    <h2>🔥 홍보문구 모음</h2>
+    <div class="promo-line">“내 이름이 들어간 나만의 스티커!”</div>
+    <div class="promo-line">“5-2에서 가장 귀여운 주문형 스티커가게!”</div>
+    <div class="promo-line">“원하는 문구, 원하는 색감, 원하는 느낌 그대로!”</div>
+    <div class="promo-line">“친구 선물용, 노트북 꾸미기, 공책 꾸미기 전부 가능!”</div>
+    <div class="promo-line">“평범한 스티커는 가라. 이제는 커스텀 스티커 시대!”</div>
+    <div class="promo-line">“주문 → 관리자 승인 → 주문내역 등록!”</div>
+  </section>
+</div>
+
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <h2>🔐 관리자 확인</h2>
+    <p>관리자 모드로 이동하려면 비밀번호를 입력하세요.</p>
+    <input id="adminCheckPassword" type="password" placeholder="비밀번호">
+    <button onclick="checkAdmin()">확인</button>
+    <button onclick="closeAdminModal()" style="background:#ef4444;color:white;">닫기</button>
+  </div>
+</div>
+
+<script>
+  function openAdminModal() {
+    document.getElementById("adminModal").classList.add("show");
+  }
+
+  function closeAdminModal() {
+    document.getElementById("adminModal").classList.remove("show");
+  }
+
+  async function checkAdmin() {
+    const password = document.getElementById("adminCheckPassword").value;
+
+    const res = await fetch("/api/admin/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+
+    if (res.ok) {
+      location.href = "/admin";
+    } else {
+      alert("비밀번호가 틀렸습니다.");
+    }
+  }
+</script>
+
+</body>
+</html>

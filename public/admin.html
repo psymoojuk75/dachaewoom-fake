@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>민상코드 관리자센터</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #111827, #35145c, #4c1d95);
+      color: white;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #2e1065);
+      padding: 42px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 38px;
+    }
+
+    nav {
+      background: rgba(255,255,255,0.12);
+      padding: 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    button, a {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 17px;
+      background: #facc15;
+      color: #111827;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin: 3px;
+    }
+
+    .danger { background: #ef4444; color: white; }
+    .green { background: #22c55e; color: #052e16; }
+    .blue { background: #38bdf8; color: #082f49; }
+    .dark { background: #111827; color: white; }
+
+    .main {
+      max-width: 1250px;
+      margin: auto;
+      padding: 32px 18px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.14);
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .login-card {
+      max-width: 850px;
+      margin: 40px auto;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 13px;
+      margin: 8px 0;
+      font-size: 15px;
+      background: #e5edf9;
+      color: #111827;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .hidden { display: none; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .mini {
+      background: rgba(255,255,255,0.16);
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .mini .number {
+      font-size: 30px;
+      color: #facc15;
+      margin-top: 8px;
+    }
+
+    .order-box {
+      background: rgba(0,0,0,0.24);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border-left: 8px solid #facc15;
+    }
+
+    .order-box.approved {
+      border-left-color: #22c55e;
+    }
+
+    .order-box b {
+      color: #fde68a;
+      font-size: 18px;
+    }
+
+    .order-img {
+      max-width: 150px;
+      border-radius: 14px;
+      display: block;
+      margin: 10px 0;
+      border: 3px solid rgba(255,255,255,0.35);
+    }
+
+    .small {
+      font-size: 13px;
+      opacity: 0.82;
+    }
+
+    .log {
+      background: rgba(0,0,0,0.28);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    .user-box {
+      background: rgba(0,0,0,0.22);
+      border-radius: 15px;
+      padding: 13px;
+      margin-bottom: 10px;
+    }
+
+    .notice-preview {
+      background: #facc15;
+      color: #111827;
+      padding: 16px;
+      border-radius: 16px;
+      font-weight: 900;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .grid, .small-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 28px;
+      }
+
+      nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>👑 민상코드 관리자센터</h1>
+  <p>5-2 스티커가게 · 주문 승인 · 회원 관리 · 공지 팝업</p>
+</header>
+
+<nav id="menu" class="hidden">
+  <a href="/">홈</a>
+  <a href="/order">주문사이트</a>
+  <button onclick="scrollToBox('dashboard')">대시보드</button>
+  <button onclick="scrollToBox('pendingBox')">승인대기</button>
+  <button onclick="scrollToBox('approvedBox')">주문내역</button>
+  <button onclick="scrollToBox('userBox')">회원목록</button>
+  <button onclick="scrollToBox('noticeBox')">공지팝업</button>
+  <button onclick="scrollToBox('logBox')">로그</button>
+</nav>
+
+<div class="main">
+
+  <section class="card login-card" id="loginBox">
+    <h2>🔐 관리자 로그인</h2>
+    <p>비밀번호를 한 번 더 입력해야 관리자 제어화면에 들어갑니다.</p>
+    <input id="adminPassword" type="password" placeholder="관리자 비밀번호">
+    <button onclick="login()">입장</button>
+  </section>
+
+  <section id="adminArea" class="hidden">
+
+    <section class="card" id="dashboard">
+      <h2>📊 대시보드</h2>
+      <div class="small-grid">
+        <div class="mini">승인 대기<div class="number" id="pendingCount">0</div></div>
+        <div class="mini">승인 완료<div class="number" id="approvedCount">0</div></div>
+        <div class="mini">총 주문<div class="number" id="totalCount">0</div></div>
+        <div class="mini">총 매출<div class="number" id="salesCount">0원</div></div>
+        <div class="mini">회원 수<div class="number" id="userCount">0</div></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="pendingBox">
+        <h2>📦 승인 대기 주문</h2>
+        <div id="pendingList">불러오는 중...</div>
+      </div>
+
+      <div class="card" id="approvedBox">
+        <h2>✅ 승인된 주문내역</h2>
+        <button class="danger" onclick="clearApproved()">승인내역 초기화</button>
+        <button class="blue" onclick="printAllOrders()">전체 주문 출력</button>
+        <br><br>
+        <div id="approvedList">불러오는 중...</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="userBox">
+        <h2>👥 회원 목록</h2>
+        <div id="userList">불러오는 중...</div>
+      </div>
+
+      <div class="card" id="noticeBox">
+        <h2>👑 관리자 공지 팝업 설정</h2>
+        <p>메인/주문사이트에 보여줄 공지 내용을 저장합니다.</p>
+
+        <input id="noticeTitle" placeholder="공지 제목">
+        <textarea id="noticeMessage" placeholder="공지 내용"></textarea>
+
+        <button onclick="saveNotice()">공지 저장</button>
+
+        <div class="notice-preview">
+          <div id="noticePreviewTitle">공지 제목 미리보기</div>
+          <div id="noticePreviewMessage">공지 내용 미리보기</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="settingBox">
+      <h2>⚙️ 메인 사이트 설정</h2>
+
+      <input id="editSiteName" placeholder="사이트 이름">
+      <input id="editTitle" placeholder="메인 제목">
+      <textarea id="editDesc" placeholder="설명"></textarea>
+      <input id="editNotice" placeholder="상단 공지">
+      <input id="editEmoji" placeholder="대표 이모지">
+      <input id="editPopular" placeholder="인기 스티커">
+
+      <button onclick="saveSite()">사이트 설정 저장</button>
+    </section>
+
+    <section class="card" id="logBox">
+      <h2>📜 관리자 로그</h2>
+      <div id="logs"></div>
+    </section>
+
+  </section>
+</div>
+
+<script>
+  let adminPassword = "";
+  let lastPendingCount = 0;
+  let currentOrders = { pending: [], approved: [] };
+
+  function playNewOrderSound() {
+    const audio = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=");
+    audio.play().catch(() => {});
+  }
+
+  function addLog(text) {
+    const logs = document.getElementById("logs");
+    const time = new Date().toLocaleString("ko-KR");
+    logs.innerHTML = `<div class="log">${time} - ${text}</div>` + logs.innerHTML;
+  }
+
+  function scrollToBox(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function login() {
+    const password = document.getElementById("adminPassword").value;
+
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+
+    if (res.ok) {
+      adminPassword = password;
+
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("adminArea").classList.remove("hidden");
+      document.getElementById("menu").classList.remove("hidden");
+
+      await loadSiteData();
+      await loadOrders();
+      await loadUsers();
+
+      lastPendingCount = currentOrders.pending.length;
+
+      addLog("관리자 로그인 성공");
+
+      setInterval(loadOrdersAuto, 5000);
+    } else {
+      alert("비밀번호 틀림!");
+    }
+  }
+
+  async function loadSiteData() {
+    const res = await fetch("/api/data");
+    const data = await res.json();
+
+    document.getElementById("editSiteName").value = data.siteName || "";
+    document.getElementById("editTitle").value = data.title || "";
+    document.getElementById("editDesc").value = data.desc || "";
+    document.getElementById("editNotice").value = data.notice || "";
+    document.getElementById("editEmoji").value = data.emoji || "";
+    document.getElementById("editPopular").value = data.popular || "";
+
+    document.getElementById("noticeTitle").value = data.popupTitle || "5-2 스티커가게 공지";
+    document.getElementById("noticeMessage").value = data.popupMessage || "새로운 스티커 주문이 열렸습니다!";
+    updateNoticePreview();
+  }
+
+  async function loadUsers() {
+    const res = await fetch("/api/users");
+    const data = await res.json();
+    const users = data.users || [];
+
+    document.getElementById("userCount").textContent = users.length;
+
+    const userList = document.getElementById("userList");
+    userList.innerHTML = "";
+
+    if (users.length === 0) {
+      userList.innerHTML = "<p>가입된 회원이 없습니다.</p>";
+      return;
+    }
+
+    users.forEach(user => {
+      userList.innerHTML += `
+        <div class="user-box">
+          <b>${user.nickname || user.username}</b>
+          <p>아이디: ${user.username}</p>
+          <p class="small">가입일: ${user.createdAt || "-"}</p>
+        </div>
+      `;
+    });
+  }
+
+  async function loadOrdersAuto() {
+    await loadOrders(false);
+
+    if (currentOrders.pending.length > lastPendingCount) {
+      playNewOrderSound();
+      addLog("🔔 새 주문 감지");
+    }
+
+    lastPendingCount = currentOrders.pending.length;
+  }
+
+  async function loadOrders(writeLog = true) {
+    const res = await fetch("/api/orders");
+    const orders = await res.json();
+
+    currentOrders = {
+      pending: orders.pending || [],
+      approved: orders.approved || []
+    };
+
+    const pending = currentOrders.pending;
+    const approved = currentOrders.approved;
+
+    const sales = approved.reduce((sum, order) => sum + Number(order.price || 0), 0);
+
+    document.getElementById("pendingCount").textContent = pending.length;
+    document.getElementById("approvedCount").textContent = approved.length;
+    document.getElementById("totalCount").textContent = pending.length + approved.length;
+    document.getElementById("salesCount").textContent = sales.toLocaleString() + "원";
+
+    const pendingList = document.getElementById("pendingList");
+    const approvedList = document.getElementById("approvedList");
+
+    pendingList.innerHTML = "";
+    approvedList.innerHTML = "";
+
+    if (pending.length === 0) {
+      pendingList.innerHTML = "<p>승인 대기 주문이 없습니다.</p>";
+    } else {
+      pending.forEach(order => {
+        pendingList.innerHTML += renderOrder(order, false);
+      });
+    }
+
+    if (approved.length === 0) {
+      approvedList.innerHTML = "<p>승인된 주문이 없습니다.</p>";
+    } else {
+      approved.forEach(order => {
+        approvedList.innerHTML += renderOrder(order, true);
+      });
+    }
+
+    if (writeLog) addLog("주문 목록 새로고침");
+  }
+
+  function renderOrder(order, approved) {
+    return `
+      <div class="order-box ${approved ? "approved" : ""}">
+        <b>${order.orderNumber || "-"} / ${order.item}</b>
+        <p>주문자: ${order.name}</p>
+        <p>회원: ${order.username || "비회원"}</p>
+        <p>문구: ${order.customText || "-"}</p>
+        <p>색상: ${order.color || "-"}</p>
+        <p>크기: ${order.size || "-"}</p>
+        <p>수량: ${order.quantity || "-"}</p>
+        <p>가격: ${(order.price || 0).toLocaleString()}원</p>
+        <p>연락처/반번호: ${order.phone || "-"}</p>
+        <p>요청사항: ${order.memo || "-"}</p>
+        ${order.imageUrl ? `<img class="order-img" src="${order.imageUrl}">` : ""}
+        <p class="small">신청시간: ${order.createdAt || "-"}</p>
+        <p class="small">상태: ${order.status || "-"}</p>
+        ${
+          approved
+            ? `<p class="small">승인시간: ${order.approvedAt || "-"}</p>`
+            : `
+              <button class="green" onclick="approveOrder(${order.id})">주문 승인</button>
+              <button class="danger" onclick="rejectOrder(${order.id})">삭제</button>
+            `
+        }
+      </div>
+    `;
+  }
+
+  async function approveOrder(id) {
+    const res = await fetch("/api/admin/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword, id })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      addLog("주문 승인 완료: " + id);
+      await loadOrders(false);
+    } else {
+      alert("승인 실패");
+    }
+  }
+
+  async function rejectOrder(id) {
+    if (!confirm("이 주문을 삭제할까요?")) return;
+
+    const res = await fetch("/api/admin/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword, id })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      addLog("주문 삭제 완료: " + id);
+      await loadOrders(false);
+    } else {
+      alert("삭제 실패");
+    }
+  }
+
+  async function clearApproved() {
+    if (!confirm("승인된 주문내역을 전부 지울까요?")) return;
+
+    const res = await fetch("/api/admin/clear-approved", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      addLog("승인 주문내역 초기화");
+      await loadOrders(false);
+    } else {
+      alert("초기화 실패");
+    }
+  }
+
+  async function saveSite() {
+    const currentRes = await fetch("/api/data");
+    const current = await currentRes.json();
+
+    const data = {
+      ...current,
+      siteName: document.getElementById("editSiteName").value,
+      title: document.getElementById("editTitle").value,
+      desc: document.getElementById("editDesc").value,
+      notice: document.getElementById("editNotice").value,
+      emoji: document.getElementById("editEmoji").value,
+      popular: document.getElementById("editPopular").value
+    };
+
+    const res = await fetch("/api/admin/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword, data })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      addLog("사이트 설정 저장 완료");
+      alert("저장 완료!");
+    } else {
+      alert("저장 실패");
+    }
+  }
+
+  function updateNoticePreview() {
+    document.getElementById("noticePreviewTitle").textContent =
+      document.getElementById("noticeTitle").value || "공지 제목 미리보기";
+
+    document.getElementById("noticePreviewMessage").textContent =
+      document.getElementById("noticeMessage").value || "공지 내용 미리보기";
+  }
+
+  document.addEventListener("input", function(e) {
+    if (e.target.id === "noticeTitle" || e.target.id === "noticeMessage") {
+      updateNoticePreview();
+    }
+  });
+
+  async function saveNotice() {
+    const currentRes = await fetch("/api/data");
+    const current = await currentRes.json();
+
+    const data = {
+      ...current,
+      popupTitle: document.getElementById("noticeTitle").value,
+      popupMessage: document.getElementById("noticeMessage").value
+    };
+
+    const res = await fetch("/api/admin/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword, data })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      addLog("공지 팝업 저장 완료");
+      alert("공지 저장 완료!");
+    } else {
+      alert("공지 저장 실패");
+    }
+  }
+
+  function printAllOrders() {
+    const approved = currentOrders.approved || [];
+
+    let html = `
+      <html>
+      <head>
+        <title>전체 주문내역</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 30px; }
+          h1 { margin-top: 0; }
+          .order {
+            border: 2px solid #111;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+          }
+          img {
+            max-width: 120px;
+            border-radius: 10px;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>🏪 5-2 스티커가게 전체 주문내역</h1>
+    `;
+
+    if (approved.length === 0) {
+      html += "<p>승인된 주문이 없습니다.</p>";
+    }
+
+    approved.forEach(order => {
+      html += `
+        <div class="order">
+          <h2>${order.orderNumber || "-"} / ${order.item}</h2>
+          <p>주문자: ${order.name}</p>
+          <p>회원: ${order.username || "비회원"}</p>
+          <p>문구: ${order.customText || "-"}</p>
+          <p>색상: ${order.color || "-"}</p>
+          <p>크기: ${order.size || "-"}</p>
+          <p>수량: ${order.quantity || "-"}</p>
+          <p>가격: ${(order.price || 0).toLocaleString()}원</p>
+          <p>요청사항: ${order.memo || "-"}</p>
+          ${order.imageUrl ? `<img src="${order.imageUrl}">` : ""}
+        </div>
+      `;
+    });
+
+    html += `
+      </body>
+      </html>
+    `;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.print();
+  }
+</script>
+
+</body>
+</html>

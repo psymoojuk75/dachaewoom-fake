@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>5-2 스티커가게 주문사이트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #fff7ed, #fdf2f8, #eef2ff);
+      color: #111827;
+    }
+
+    header {
+      background: white;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    button, a {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: #6366f1;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin: 4px;
+    }
+
+    .dark { background: #111827; }
+    .green { background: #22c55e; color: #052e16; }
+    .pink { background: #ec4899; }
+    .danger { background: #ef4444; }
+
+    .main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 28px 18px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ec4899, #6366f1);
+      color: white;
+      border-radius: 34px;
+      padding: 38px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+    }
+
+    .hero h1 {
+      font-size: 44px;
+      margin: 0;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .emoji { font-size: 110px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 26px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.1);
+    }
+
+    .card h2 { margin-top: 0; }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .promo {
+      background: #f3f4f6;
+      border-radius: 16px;
+      padding: 14px;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .preview-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 320px;
+      background: linear-gradient(135deg, #fdf2f8, #eef2ff);
+      border-radius: 24px;
+      border: 3px dashed #c4b5fd;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .sticker-preview {
+      width: 250px;
+      min-height: 250px;
+      border-radius: 35px;
+      background: linear-gradient(135deg, #fbcfe8, #c7d2fe);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 20px;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sticker-preview img {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .preview-title {
+      font-size: 28px;
+      font-weight: 900;
+      word-break: break-word;
+    }
+
+    .preview-sub {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      opacity: 0.8;
+    }
+
+    .price-box {
+      background: #111827;
+      color: white;
+      border-radius: 22px;
+      padding: 20px;
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .price {
+      font-size: 36px;
+      font-weight: 900;
+      color: #facc15;
+    }
+
+    .order-box {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 17px;
+      margin-bottom: 14px;
+      border-left: 8px solid #22c55e;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+    }
+
+    .order-box img {
+      max-width: 90px;
+      border-radius: 12px;
+      display: block;
+      margin-top: 8px;
+    }
+
+    .status {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .small {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .auth-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .user-badge {
+      background: #111827;
+      color: white;
+      border-radius: 999px;
+      padding: 9px 14px;
+      display: inline-block;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .grid, .auth-box {
+        grid-template-columns: 1fr;
+      }
+
+      .emoji {
+        font-size: 82px;
+      }
+
+      .sticker-preview {
+        width: 220px;
+        min-height: 220px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🏪 5-2 스티커가게</div>
+  <div>
+    <a href="/">메인</a>
+    <a href="/admin" class="dark">관리자</a>
+  </div>
+</header>
+
+<div class="main">
+
+  <section class="hero">
+    <div>
+      <h1>커스텀 스티커 주문</h1>
+      <p>
+        이미지 업로드, 문구 입력, 색상 선택, 가격 계산까지!<br>
+        주문하면 관리자 승인 후 주문내역에 등록됩니다.
+      </p>
+      <div id="loginState" class="user-badge">비회원 주문 가능</div>
+    </div>
+    <div class="emoji">🛍️</div>
+  </section>
+
+  <section class="card" style="margin-top:26px;">
+    <h2>👥 회원가입 / 로그인</h2>
+    <div class="auth-box">
+      <div>
+        <h3>회원가입</h3>
+        <input id="joinUsername" placeholder="아이디">
+        <input id="joinPassword" type="password" placeholder="비밀번호">
+        <input id="joinNickname" placeholder="닉네임">
+        <button class="green" onclick="registerUser()">회원가입</button>
+      </div>
+
+      <div>
+        <h3>로그인</h3>
+        <input id="loginUsername" placeholder="아이디">
+        <input id="loginPassword" type="password" placeholder="비밀번호">
+        <button onclick="loginUser()">로그인</button>
+        <button class="danger" onclick="logoutUser()">로그아웃</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <div class="card">
+      <h2>🛒 주문하기</h2>
+
+      <div class="promo">직접 꾸미는 커스텀 주문 가능!</div>
+
+      <input id="name" placeholder="이름">
+
+      <select id="item" onchange="updatePreviewAndPrice()">
+        <option value="고양이 왕관 스티커">고양이 왕관 스티커</option>
+        <option value="민상코드 로고 스티커">민상코드 로고 스티커</option>
+        <option value="콩떡게임즈 스티커">콩떡게임즈 스티커</option>
+        <option value="랜덤 스티커팩">랜덤 스티커팩</option>
+        <option value="직접 커스텀 디자인">직접 커스텀 디자인</option>
+      </select>
+
+      <input id="customText" placeholder="스티커에 넣을 문구" oninput="updatePreviewAndPrice()">
+
+      <select id="color" onchange="updatePreviewAndPrice()">
+        <option value="핑크">핑크</option>
+        <option value="보라">보라</option>
+        <option value="파랑">파랑</option>
+        <option value="검정">검정</option>
+        <option value="무지개">무지개</option>
+      </select>
+
+      <select id="size" onchange="updatePreviewAndPrice()">
+        <option value="작게">작게</option>
+        <option value="보통" selected>보통</option>
+        <option value="크게">크게</option>
+      </select>
+
+      <input id="quantity" type="number" min="1" value="1" placeholder="수량" oninput="updatePreviewAndPrice()">
+
+      <input id="phone" placeholder="연락처 또는 반/번호">
+
+      <input id="image" type="file" accept="image/*" onchange="previewImage(event); updatePreviewAndPrice();">
+
+      <textarea id="memo" placeholder="추가 요청사항"></textarea>
+
+      <div class="price-box">
+        <div>예상 가격</div>
+        <div class="price" id="priceText">1,000원</div>
+      </div>
+
+      <button class="pink" onclick="submitOrder()">주문 신청</button>
+      <button class="dark" onclick="printReceipt()">영수증 출력</button>
+    </div>
+
+    <div class="card">
+      <h2>🎨 스티커 미리보기</h2>
+
+      <div class="preview-wrap">
+        <div class="sticker-preview" id="stickerPreview">
+          <div>
+            <img id="previewImg" style="display:none;">
+            <div class="preview-title" id="previewTitle">고양이 왕관 스티커</div>
+            <div class="preview-sub" id="previewSub">핑크 · 보통 · 1개</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="promo">업로드한 이미지는 주문과 함께 관리자에게 전달됩니다.</div>
+    </div>
+
+  </section>
+
+  <section class="card" style="margin-top:26px;">
+    <h2>✅ 승인된 주문내역</h2>
+    <div id="approvedList">불러오는 중...</div>
+  </section>
+
+</div>
+
+<script>
+  let currentUser = null;
+  let lastPrice = 0;
+
+  function playDing() {
+    const audio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQQAAAAAAA==");
+    audio.play().catch(() => {});
+  }
+
+  function getPrice() {
+    const item = document.getElementById("item").value;
+    const size = document.getElementById("size").value;
+    const quantity = Number(document.getElementById("quantity").value || 1);
+    const hasImage = document.getElementById("image").files.length > 0;
+
+    let base = 0;
+    if (item.includes("랜덤")) base = 0;
+    if (item.includes("콩떡")) base = 0;
+    if (item.includes("민상코드")) base = 0;
+    if (item.includes("커스텀")) base = 0;
+
+    if (size === "작게") base -= 0;
+    if (size === "크게") base += 0;
+    if (hasImage) base += 0;
+
+    return Math.max(base, 0) * quantity;
+  }
+
+  function updatePreviewAndPrice() {
+    const item = document.getElementById("item").value;
+    const text = document.getElementById("customText").value.trim();
+    const color = document.getElementById("color").value;
+    const size = document.getElementById("size").value;
+    const quantity = document.getElementById("quantity").value || 1;
+
+    document.getElementById("previewTitle").textContent = text || item;
+    document.getElementById("previewSub").textContent = `${color} · ${size} · ${quantity}개`;
+
+    const preview = document.getElementById("stickerPreview");
+
+    if (color === "핑크") preview.style.background = "linear-gradient(135deg, #fbcfe8, #f9a8d4)";
+    if (color === "보라") preview.style.background = "linear-gradient(135deg, #ddd6fe, #a78bfa)";
+    if (color === "파랑") preview.style.background = "linear-gradient(135deg, #bfdbfe, #60a5fa)";
+    if (color === "검정") {
+      preview.style.background = "linear-gradient(135deg, #111827, #374151)";
+      preview.style.color = "white";
+    } else {
+      preview.style.color = "#111827";
+    }
+    if (color === "무지개") preview.style.background = "linear-gradient(135deg, #f87171, #facc15, #4ade80, #60a5fa, #a78bfa)";
+
+    lastPrice = getPrice();
+    document.getElementById("priceText").textContent = lastPrice.toLocaleString() + "원";
+  }
+
+  function previewImage(event) {
+    const file = event.target.files[0];
+    const img = document.getElementById("previewImg");
+
+    if (!file) {
+      img.style.display = "none";
+      img.src = "";
+      return;
+    }
+
+    img.src = URL.createObjectURL(file);
+    img.style.display = "block";
+  }
+
+  async function registerUser() {
+    const username = document.getElementById("joinUsername").value.trim();
+    const password = document.getElementById("joinPassword").value.trim();
+    const nickname = document.getElementById("joinNickname").value.trim();
+
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, nickname })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      alert("회원가입 완료!");
+    } else {
+      alert(result.message || "회원가입 실패");
+    }
+  }
+
+  async function loginUser() {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      currentUser = result.user;
+      localStorage.setItem("stickerUser", JSON.stringify(currentUser));
+      document.getElementById("loginState").textContent = `${currentUser.nickname}님 로그인 중`;
+      alert("로그인 성공!");
+    } else {
+      alert("로그인 실패");
+    }
+  }
+
+  function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem("stickerUser");
+    document.getElementById("loginState").textContent = "비회원 주문 가능";
+    alert("로그아웃 완료");
+  }
+
+  async function submitOrder() {
+    const name = document.getElementById("name").value.trim();
+
+    if (!name) {
+      alert("이름을 입력하세요.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("username", currentUser ? currentUser.username : "비회원");
+    formData.append("name", name);
+    formData.append("item", document.getElementById("item").value);
+    formData.append("customText", document.getElementById("customText").value);
+    formData.append("color", document.getElementById("color").value);
+    formData.append("size", document.getElementById("size").value);
+    formData.append("quantity", document.getElementById("quantity").value);
+    formData.append("phone", document.getElementById("phone").value);
+    formData.append("memo", document.getElementById("memo").value);
+    formData.append("previewText", document.getElementById("previewTitle").textContent);
+
+    const image = document.getElementById("image").files[0];
+    if (image) formData.append("image", image);
+
+    const res = await fetch("/api/order", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (result.ok) {
+      playDing();
+      alert(`주문 신청 완료!\n주문번호: ${result.order.orderNumber}\n가격: ${result.order.price.toLocaleString()}원`);
+
+      document.getElementById("name").value = "";
+      document.getElementById("customText").value = "";
+      document.getElementById("quantity").value = "1";
+      document.getElementById("phone").value = "";
+      document.getElementById("memo").value = "";
+      document.getElementById("image").value = "";
+      document.getElementById("previewImg").style.display = "none";
+
+      updatePreviewAndPrice();
+      loadOrders();
+    }
+  }
+
+  async function loadOrders() {
+    const res = await fetch("/api/orders");
+    const orders = await res.json();
+
+    const approved = orders.approved || [];
+    const approvedList = document.getElementById("approvedList");
+
+    approvedList.innerHTML = "";
+
+    if (approved.length === 0) {
+      approvedList.innerHTML = "<p>아직 승인된 주문이 없습니다.</p>";
+      return;
+    }
+
+    approved.forEach(order => {
+      approvedList.innerHTML += `
+        <div class="order-box">
+          <b>${order.orderNumber || "-"} / ${order.item}</b>
+          <p>주문자: ${order.name}</p>
+          <p>회원: ${order.username || "비회원"}</p>
+          <p>문구: ${order.customText || "-"}</p>
+          <p>색상: ${order.color || "-"}</p>
+          <p>크기: ${order.size || "-"}</p>
+          <p>수량: ${order.quantity || "-"}</p>
+          <p>가격: ${(order.price || 0).toLocaleString()}원</p>
+          <p>요청사항: ${order.memo || "-"}</p>
+          ${order.imageUrl ? `<img src="${order.imageUrl}">` : ""}
+          <p class="small">승인시간: ${order.approvedAt || "-"}</p>
+          <span class="status">승인완료</span>
+        </div>
+      `;
+    });
+  }
+
+  function printReceipt() {
+    updatePreviewAndPrice();
+
+    const item = document.getElementById("item").value;
+    const text = document.getElementById("customText").value || "-";
+    const color = document.getElementById("color").value;
+    const size = document.getElementById("size").value;
+    const quantity = document.getElementById("quantity").value;
+    const name = document.getElementById("name").value || "-";
+
+    const receipt = `
+      <html>
+      <head>
+        <title>주문 영수증</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 30px; }
+          .box { border: 2px solid #111; border-radius: 18px; padding: 25px; max-width: 420px; }
+          h1 { margin-top: 0; }
+          p { font-size: 16px; }
+          .price { font-size: 28px; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h1>🏪 5-2 스티커가게 영수증</h1>
+          <p>주문자: ${name}</p>
+          <p>상품: ${item}</p>
+          <p>문구: ${text}</p>
+          <p>색상: ${color}</p>
+          <p>크기: ${size}</p>
+          <p>수량: ${quantity}</p>
+          <p class="price">예상가격: ${lastPrice.toLocaleString()}원</p>
+          <p>※ 관리자 승인 전 예상 영수증입니다.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const win = window.open("", "_blank");
+    win.document.write(receipt);
+    win.document.close();
+    win.print();
+  }
+
+  function restoreLogin() {
+    const saved = localStorage.getItem("stickerUser");
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      document.getElementById("loginState").textContent = `${currentUser.nickname}님 로그인 중`;
+    }
+  }
+
+  restoreLogin();
+  updatePreviewAndPrice();
+  loadOrders();
+</script>
+
+</body>
+</html>
