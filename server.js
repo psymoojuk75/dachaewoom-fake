@@ -70,7 +70,7 @@ function writeJson(file, data) {
 }
 
 function checkPassword(password) {
-  return password === "minsang";
+  return password === "kms0727hi";
 }
 
 function makeOrderNumber() {
