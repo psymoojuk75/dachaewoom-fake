@@ -5,6 +5,26 @@ const multer = require("multer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DATA_FILE = path.join(__dirname, "data.json");
+
+function readData() {
+  if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify({
+      users: [],
+      orders: [],
+      stickers: [],
+      admins: []
+    }, null, 2));
+  }
+  function writeData(data) {
+  fs.writeFileSync(
+    DATA_FILE,
+    JSON.stringify(data, null, 2)
+  );
+}
+
+  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+}
 
 const DATA_FILE = path.join(__dirname, "data.json");
 const ORDERS_FILE = path.join(__dirname, "orders.json");
@@ -85,16 +105,16 @@ function makeOrderNumber() {
 function calcPrice(item, size, quantity, hasImage) {
   let base = 1000;
 
-  if (item.includes("랜덤")) base = 1500;
-  if (item.includes("콩떡")) base = 1800;
-  if (item.includes("민상코드")) base = 2000;
-  if (item.includes("커스텀")) base = 2500;
+  if (item.includes("랜덤")) base =0;
+  if (item.includes("콩떡")) base = 0;
+  if (item.includes("민상코드")) base = 0;
+  if (item.includes("커스텀")) base = 0;
 
-  if (size === "작게") base -= 300;
-  if (size === "크게") base += 700;
-  if (hasImage) base += 500;
+  if (size === "작게") base -= 0;
+  if (size === "크게") base +=0;
+  if (hasImage) base += 0;
 
-  return Math.max(base, 500) * Number(quantity || 1);
+  return Math.max(base, 0) * Number(quantity || 1);
 }
 
 app.get("/", (req, res) => {
@@ -217,6 +237,17 @@ app.post("/api/order", upload.single("image"), (req, res) => {
   });
 });
 
+app.get("/api/orders", (req, res) => {
+  const orders = readJson(ORDERS_FILE);
+
+  orders.pending ||= [];
+  orders.approved ||= [];
+
+  res.json({
+    ok: true,
+    orders
+  });
+});
 app.post("/api/admin/check", (req, res) => {
   if (checkPassword(req.body.password)) {
     res.json({ ok: true });
